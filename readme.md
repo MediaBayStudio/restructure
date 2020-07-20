@@ -4,19 +4,25 @@
 Нужно вызвать новый класс и в настройках указать размеры экранов, родительские элементы и порядок дочерних элементов, например:
 ```javascript
 new Replacement({
-  'mobile-first': true, // по умолчанию
   'initial': {
-    '.footer__top': ['.footer__nav', '.footer__callback', '.footer__policy']
-    '#footer__bottom': ['.footer__copyright', '.footer__insta', '.footer__telegram']
+    'parent1': ['child1', 'child2', 'child3']
+    'parent2': ['child4', 'child6', 'child5']
   },
   '(min-width: 1024px)': {
-    '.footer__top': ['.footer__telegram', '.footer__insta', '.footer__copyright']
-    '#footer__bottom': ['.footer__nav', '.footer__callback', '.footer__policy']
+    'parent1': ['child5', 'child6', 'child4']
+    'parent2': ['child1', 'child2', 'child3']
   }
 });
 ```
 Где `parent` и `child` - css селекторы, по которым будут получены элементы с помощью `document.querySelector`.
-Для улучшения производительности, лучше получить сначала элементы в нужных местах и передавать в массив не строку, а `HTMLElement`, например:
+Алгоритм работы скрипта:
+- из объекта `initial` скрипт получит все родительские элементы со страницы;
+- затем из того же объекта будут получены все дочерние элементы, но поиск будет происходить уже в родительских элементах (`footer.querySelector('.footer__nav')`);
+- в других медиа-запросах поиск элементов не будет происходить повторно через `querySelector()`, элементы будут выбраны с помощью метода `matches()`;
+- потом инициализируются сетки в нужный скрипту вид (объект `Map`);
+- проверяются медиа-запросы;
+- если попали в медиа-запрос, то родительский элемент полностью очищается и дочерние элементы вставляются в установленном порядке.
+Также можно указывать не селекторы, а сразу `HTMLElement`, например:
 ```javascript
 let footer = document.querySelector('.footer'),
   footerNav = footer.querySelector('.footer__nav'),
@@ -27,7 +33,6 @@ let footer = document.querySelector('.footer'),
   footerTelegram = footer.querySelector('.footer__telegram');
 
 new Replacement({
-  'mobile-first': true, // по умолчанию
   'initial': {
     '.footer__top': [footerNav, footerCallback, footerPolicy]
     '#footer__bottom': [footerCopyright, footerInsta, footerTelegram]
@@ -41,7 +46,7 @@ new Replacement({
 Таким образом, на экранах от 320px до 1024px блоки будут рассталвены как укзазано в объекте `initial`, а на размерах экранов от 1024px и больше, элементы будут расставлены как указано в следующем объекте `(min-width: 1024px)`.
 **Все элементы внутри родительского блока будут удалены и вставлены заново в установленном порядке.**
 
-Если установить `mobile-first: false`, то настройки могут выглядеть следующим образом:
+Медиа-запросы должны идти подряд в нужном порядке. Например, если, desktop first, то на умнеьшение, например:
 ```javascript
 new Replacement({
   'mobile-first': false,
@@ -52,7 +57,10 @@ new Replacement({
   '(max-width: 1024px)': {
     '.footer__top': [footerTelegram, footerInsta, footerCopyright]
     '#footer__bottom': [footerNav, footerCallback, footerPolicy]
+  },
+  '(max-width: 768px)': {
+    '...': '...'
   }
 });
 ```
-И это будет озночать, что на экранах от 1920px до 1024px, элементы будут расставлены как укзано в объекте `initial`, а на экранах от 0px до 1024px, элементы будут расставлены как в следующем объекте `(max-width: 1024px)`.
+И это будет озночать, что на экранах от 1920px до 1024px, элементы будут расставлены как укзано в объекте `initial`. На экранах от 768px до 1024px, элементы будут расставлены как в следующем объекте `(max-width: 1024px)` и т.д.

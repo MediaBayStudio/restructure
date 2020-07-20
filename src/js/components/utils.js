@@ -1,9 +1,7 @@
 return function(options) {
   let _ = this;
 
-  _.defaults = {
-    'mobile-first': true
-  };
+  _.defaults = {};
 
   _.options = options;
 
@@ -36,8 +34,6 @@ return function(options) {
     handleEvent: _.initGrid,
     ctx: _
   };
-
-  _.mobileFirst = _.options['mobile-first'];
 
   _.grid = {};
   _.parentElements = [];

@@ -50,7 +50,6 @@
           '.header': ['.header__logo'],
           'main': ['.content'],
           '.footer__top': ['.footer__nav', '.footer__callback', '.footer__policy'],
-          // '#footer__bottom': ['.footer__copyright', '.footer__insta', '.footer__telegram']
           '#footer__bottom': [footerCopyright, footerInsta, footerTelegram]
         },
         '(min-width: 575.98px)': {
@@ -67,6 +66,10 @@
         }
       });
       console.log(scr);
+
+      footerCopyright.addEventListener('click', function() {
+        console.log('click');  
+      });
     });
   </script>
 </body>
