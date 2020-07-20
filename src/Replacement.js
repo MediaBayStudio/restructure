@@ -34,24 +34,30 @@
     
       _.matchMedia = function(mediaQuery) {
         return window.matchMedia(mediaQuery).matches;
-      }
+      };
     
       _.dispatchEvent = function(element, eventName) {
         if (typeof window.CustomEvent === "function") {
           let evt = new CustomEvent(eventName);
           element.dispatchEvent(evt);
         }
-      }  
+      };
+    
+      _.resizeHandler = {
+        handleEvent: _.initGrid,
+        ctx: _
+      };
     
       _.mobileFirst = _.options['mobile-first'];
-      
+    
       _.grid = {};
       _.parentElements = [];
       _.childElements = [];
+      _.currentMediaQuery = undefined;
     
       _.init();
-      // _.initGrid();
-    
+      _.initGrid();
+      window.addEventListener('resize', _.resizeHandler);
     }
   })();
 
@@ -131,16 +137,45 @@
   
   };
   Replacement.prototype.initGrid = function() {
-    let _ = this,
+    let _ = this.ctx || this,
       options = _.options,
       grid = _.grid,
       elements = _.elements,
-      currentMediaQuery;
+      targetMediaQuery = _.targetMediaQuery,
+      currentMediaQuery = _.currentMediaQuery;
+  
+    _.targetMediaQuery = undefined; // === initial
+  
+    for (let mediaQuery in grid) {
+      if (_.matchMedia(mediaQuery)) {
+        _.targetMediaQuery = mediaQuery;
+      }
+    }
+  
+    if (_.targetMediaQuery !== _.currentMediaQuery) {
+      _.placementElements();
+    }
   };
   Replacement.prototype.placementElements = function() {
     let _ = this,
       options = _.options,
-      grid = _.grid;
+      grid = _.grid,
+      targetMediaQuery = _.targetMediaQuery,
+      currentMediaQuery = _.currentMediaQuery,
+      targetGrid = grid[targetMediaQuery || 'initial']
+  
+    if (targetMediaQuery) {
+      _.currentMediaQuery = targetMediaQuery;
+    } else {
+      _.currentMediaQuery = undefined;
+    }
+  
+    targetGrid.forEach(function(childsArray, parent) {
+      parent.innerHTML = '';
+      for (let i = 0; i < childsArray.length; i++) {
+        parent.appendChild(childsArray[i]);
+      }
+    });
   };
 
   return Replacement;

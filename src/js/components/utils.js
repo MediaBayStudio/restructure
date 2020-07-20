@@ -23,22 +23,28 @@ return function(options) {
 
   _.matchMedia = function(mediaQuery) {
     return window.matchMedia(mediaQuery).matches;
-  }
+  };
 
   _.dispatchEvent = function(element, eventName) {
     if (typeof window.CustomEvent === "function") {
       let evt = new CustomEvent(eventName);
       element.dispatchEvent(evt);
     }
-  }  
+  };
+
+  _.resizeHandler = {
+    handleEvent: _.initGrid,
+    ctx: _
+  };
 
   _.mobileFirst = _.options['mobile-first'];
-  
+
   _.grid = {};
   _.parentElements = [];
   _.childElements = [];
+  _.currentMediaQuery = undefined;
 
   _.init();
-  // _.initGrid();
-
+  _.initGrid();
+  window.addEventListener('resize', _.resizeHandler);
 }
