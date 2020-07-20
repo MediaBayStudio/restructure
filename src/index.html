@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./reset.css">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./Replacement.js"></script>
+  <title>Title</title>
+</head>
+<body>
+  <header class="header container">
+    <span class="header__logo">logo</span>
+  </header>
+  <main>
+    <span class="content">content</span>
+  </main>
+  <footer class="footer container">
+    <div class="footer__top">
+      <nav class="footer__nav">
+        <ul class="nav__list">
+          <li class="nav__list-item"><a href="#" class="nav__link">Link 1</a></li>
+          <li class="nav__list-item"><a href="#" class="nav__link">Link 2</a></li>
+          <li class="nav__list-item"><a href="#" class="nav__link">Link 3</a></li>
+          <li class="nav__list-item"><a href="#" class="nav__link">Link 4</a></li>
+        </ul>
+      </nav>
+      <button type="button" class="footer__callback">Callback</button>
+      <a href="#" class="footer__policy">Privacy policy</a>
+    </div>
+    <div class="footer__bottom" id="footer__bottom">
+      <span class="footer__copyright">2020 &copy; All rights reserved</span>
+      <a href="#" class="footer__insta"><img src="./icon-instagram.svg" alt="instagram"></a>
+      <a href="#" class="footer__telegram"><img src="./icon-telegram.svg" alt="telegram"></a>
+    </div>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let footer = document.querySelector('.footer'),
+        footerNav = footer.querySelector('.footer__nav'),
+        footerCallback = footer.querySelector('.footer__callback'),
+        footerPolicy = footer.querySelector('.footer__policy'),
+        footerCopyright = footer.querySelector('.footer__copyright'),
+        footerInsta = footer.querySelector('.footer__insta'),
+        footerTelegram = footer.querySelector('.footer__telegram');
+
+      let scr = new Replacement({
+        'initial': {
+          '.header': ['.header__logo'],
+          'main': ['.content'],
+          '.footer__top': ['.footer__nav', '.footer__callback', '.footer__policy'],
+          // '#footer__bottom': ['.footer__copyright', '.footer__insta', '.footer__telegram']
+          '#footer__bottom': [footerCopyright, footerInsta, footerTelegram]
+        },
+        '(min-width: 575.98px)': {
+          '.header': ['.content'],
+          'main': ['.header__logo'],
+          '.footer__top': ['.footer__telegram', '.footer__nav', '.footer__insta', '.footer__copyright', '.footer__callback', '.footer__policy'],
+          '#footer__bottom': []
+        },
+        '(min-width: 1024px)': {
+          '.header': ['.header__logo'],
+          'main': ['.content'],
+          '.footer__top': ['.footer__telegram', '.footer__insta', '.footer__copyright'],
+          '#footer__bottom': ['.footer__nav', '.footer__callback', '.footer__policy']
+        }
+      });
+      console.log(scr);
+    });
+  </script>
+</body>
+</html>
