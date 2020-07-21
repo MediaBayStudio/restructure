@@ -12,10 +12,15 @@ Replacement.prototype.placementElements = function() {
     _.currentMediaQuery = undefined;
   }
 
+
   targetGrid.forEach(function(childsArray, parent) {
-    parent.innerHTML = '';
-    for (let i = 0; i < childsArray.length; i++) {
-      parent.appendChild(childsArray[i]);
+    // удаляем всех потомков (для поддержки IE)
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    // вставляем всех потомков в нужном нам порядке
+    for (let j = 0; j < childsArray.length; j++) {
+      parent.appendChild(childsArray[j]);
     }
   });
 };

@@ -23,13 +23,6 @@ return function(options) {
     return window.matchMedia(mediaQuery).matches;
   };
 
-  _.dispatchEvent = function(element, eventName) {
-    if (typeof window.CustomEvent === "function") {
-      let evt = new CustomEvent(eventName);
-      element.dispatchEvent(evt);
-    }
-  };
-
   _.resizeHandler = {
     handleEvent: _.initGrid,
     ctx: _

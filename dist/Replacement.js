@@ -12,9 +12,7 @@
     return function(options) {
       let _ = this;
     
-      _.defaults = {
-        'mobile-first': true
-      };
+      _.defaults = {};
     
       _.options = options;
     
@@ -36,19 +34,10 @@
         return window.matchMedia(mediaQuery).matches;
       };
     
-      _.dispatchEvent = function(element, eventName) {
-        if (typeof window.CustomEvent === "function") {
-          let evt = new CustomEvent(eventName);
-          element.dispatchEvent(evt);
-        }
-      };
-    
       _.resizeHandler = {
         handleEvent: _.initGrid,
         ctx: _
       };
-    
-      _.mobileFirst = _.options['mobile-first'];
     
       _.grid = {};
       _.parentElements = [];
@@ -74,6 +63,21 @@
       initialMapObject = new Map(),
       parentElements = _.parentElements,
       childElements = _.childElements,
+      htmlClassRegExp = /\./g,
+      comparisonSelector = function(element, selector) {
+        let isId = selector.indexOf('#') !== -1,
+          isClass = selector.indexOf('.') !== -1;
+  
+        if (isId) {
+          return element.id === selector.slice(1);
+        } else if (isClass) {
+          if (element.tagName === 'A') {
+          }
+          return element.classList.contains(selector.slice(1));
+        } else {
+          return element.tagName === selector.toUpperCase();
+        }
+      },
       parseGrid = function(mediaQuery) {
         let elements = options[mediaQuery],
           map = new Map();
@@ -83,27 +87,38 @@
             currentParent,
             elementsArray = [];
   
+          // проверяем какой из родителей подойдет по селектору id или class
           for (let i = 0; i < parentElements.length; i++) {
-            if (parentElements[i].matches(parentSelector)) {
+            if (comparisonSelector(parentElements[i], parentSelector)) {
               currentParent = parentElements[i];
               break;
             }
           }
   
+          // проверяем какой из детей подойдет по селекутору id или class
           for (let i = 0; i < childsSelectors.length; i++) {
             let childSelector = childsSelectors[i];
             for (let j = 0; j < childElements.length; j++) {
-              if (childElements[j].matches(childSelector)) {
+              if (comparisonSelector(childElements[j], childSelector)) {
                 elementsArray[i] = childElements[j];
                 break;
               }
             }
           }
+  
           map.set(currentParent, elementsArray);
         }
   
         _.grid[mediaQuery] = map;
       };
+  
+  /*
+    Найдем все объекты со страницы через объект initial
+    Сформируем удобный объект Map и с его помощью будем формировать другие объекты по размерам экранов, напрмиер:
+    'initial': {
+      div.footer: [div.footer__nav, div.footer__callback, ...]
+    }
+  */
   
     for (let initialElement in initialElements) {
       let selectors = initialElements[initialElement],
@@ -170,10 +185,15 @@
       _.currentMediaQuery = undefined;
     }
   
+  
     targetGrid.forEach(function(childsArray, parent) {
-      parent.innerHTML = '';
-      for (let i = 0; i < childsArray.length; i++) {
-        parent.appendChild(childsArray[i]);
+      // удаляем всех потомков (для поддержки IE)
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      // вставляем всех потомков в нужном нам порядке
+      for (let j = 0; j < childsArray.length; j++) {
+        parent.appendChild(childsArray[j]);
       }
     });
   };

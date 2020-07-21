@@ -6,7 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./reset.css">
   <link rel="stylesheet" href="./style.css">
-  <script defer src="./Replacement.js"></script>
+  <!-- <script defer src="./Replacement.js"></script> -->
+  <script defer src="../dist/Replacement.min.js"></script>
   <title>Title</title>
 </head>
 <body>
@@ -31,8 +32,8 @@
     </div>
     <div class="footer__bottom" id="footer__bottom">
       <span class="footer__copyright">2020 &copy; All rights reserved</span>
-      <a href="#" class="footer__insta"><img src="./icon-instagram.svg" alt="instagram"></a>
-      <a href="#" class="footer__telegram"><img src="./icon-telegram.svg" alt="telegram"></a>
+      <a href="instagram.ru" class="footer__insta"><img src="./icon-instagram.svg" alt="instagram"></a>
+      <a href="telegram.ru" class="footer__telegram"><img src="./icon-telegram.svg" alt="telegram"></a>
     </div>
   </footer>
   <script>
@@ -64,11 +65,6 @@
           '.footer__top': ['.footer__telegram', '.footer__insta', '.footer__copyright'],
           '#footer__bottom': ['.footer__nav', '.footer__callback', '.footer__policy']
         }
-      });
-      console.log(scr);
-
-      footerCopyright.addEventListener('click', function() {
-        console.log('click');  
       });
     });
   </script>
