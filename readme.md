@@ -16,42 +16,68 @@ new Replacement({
   }
 });
 ```
-Где `parent` и `child` - css селекторы, по которым будут получены элементы с помощью `document.querySelector`. Пока что допустимы 1 класс или 1 id или 1 html тег, например: `.footer` или `#footer` или `footer`.
+Где `parent` и `child` - css селекторы, по которым будут получены элементы с помощью `document.querySelector`. Пока что допустимы одиночный класс, одиночный id или одиночный html тег, например: `.footer` или `#footer` или `footer`.
+
 Алгоритм работы скрипта:
 - из объекта `initial` скрипт получит все родительские элементы со страницы;
 - затем из того же объекта будут получены все дочерние элементы, но поиск будет происходить уже в родительских элементах (`footer.querySelector('.footer__nav')`);
 - в других медиа-запросах поиск элементов не будет происходить повторно через `querySelector()`, элементы будут выбраны cравниваем классов, id или тегов;
-- потом инициализируются сетки в нужный скрипту вид (объект `Map`);
+- потом инициализируются сетки в нужный скрипту вид (создается объект `Map`);
 - проверяются медиа-запросы;
 - если попали в медиа-запрос, то родительский элемент полностью очищается и дочерние элементы вставляются в установленном порядке.
-Также можно указывать не селекторы, а сразу `HTMLElement`, например:
+
+Также, вместо селекторов можно указать сразу готовые объекты `Map`. Такой способ будет более надежный в поиске, ведь будут переданы уже готовые элементы и скрипт не будет ничего искать, и это актуально, если на стрнаице сложное дерево с повторяющиемся классами, например:
 ```javascript
-let footer = document.querySelector('.footer'),
-  footerNav = footer.querySelector('.footer__nav'),
-  footerCallback = footer.querySelector('.footer__callback'),
-  footerPolicy = footer.querySelector('.footer__policy'),
-  footerCopyright = footer.querySelector('.footer__copyright'),
-  footerInsta = footer.querySelector('.footer__insta'),
-  footerTelegram = footer.querySelector('.footer__telegram');
+let section = document.querySelector('#section'),
+  sectionHeadingBlock = section.querySelector('.section__heading-block'),
+  sectionFirstTitle = section.querySelector('h2.section__title'),
+  sectionSecondTitle = section.querySelector('span.section__title'),
+  sectionFirstDescr = section.querySelector('.section__descr:first-of-type'),
+  sectionSecondDescr = section.querySelector('.section__descr:nth-of-type(2)'),
+  sectionThirdDescr = section.querySelector('.section__descr:nth-of-type(3)'),
+  sectionFourthDescr = section.querySelector('.section__descr:nth-of-type(4)'),
+  initialMap = new Map([
+    [
+      section, [
+        sectionHeadingBlock,
+        sectionFirstTitle,
+        sectionFirstDescr,
+        sectionSecondDescr,
+        sectionSecondTitle,
+        sectionThirdDescr,
+        sectionFourthDescr
+      ]
+    ]
+  ]),
+  minWidth576Map = new Map([
+    [
+      section, [
+        sectionHeadingBlock,
+        sectionFirstDescr,
+        sectionSecondDescr,
+        sectionThirdDescr,
+        sectionFourthDescr
+      ]
+    ],
+    [
+      sectionHeadingBlock, [
+        sectionFirstTitle,
+        sectionSecondTitle
+      ]
+    ]
+  ]);
 
 new Replacement({
-  'initial': {
-    '.footer__top': [footerNav, footerCallback, footerPolicy]
-    '#footer__bottom': [footerCopyright, footerInsta, footerTelegram]
-  },
-  '(min-width: 1024px)': {
-    '.footer__top': [footerTelegram, footerInsta, footerCopyright]
-    '#footer__bottom': [footerNav, footerCallback, footerPolicy]
-  }
+  'initial': initialMap,
+  '(min-width: 576px)': minWidth576Map
 });
 ```
-Таким образом, на экранах от 320px до 1024px блоки будут рассталвены как укзазано в объекте `initial`, а на размерах экранов от 1024px и больше, элементы будут расставлены как указано в следующем объекте `(min-width: 1024px)`.
+Таким образом, на экранах от 320px до 576px блоки будут рассталвены как укзазано в объекте `initial`, а на размерах экранов от 576px и больше, элементы будут расставлены как указано в следующем объекте `(min-width: 576px)`.
 **Все элементы внутри родительского блока будут удалены и вставлены заново в установленном порядке.**
 
 Медиа-запросы должны идти подряд в нужном порядке. Например, если, desktop first, то на умнеьшение, например:
 ```javascript
 new Replacement({
-  'mobile-first': false,
   'initial': {
     '.footer__top': [footerNav, footerCallback, footerPolicy]
     '#footer__bottom': [footerCopyright, footerInsta, footerTelegram]
