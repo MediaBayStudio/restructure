@@ -19,8 +19,6 @@ Replacement.prototype.init = function() {
       if (isId) {
         return element.id === selector.slice(1);
       } else if (isClass) {
-        if (element.tagName === 'A') {
-        }
         return element.classList.contains(selector.slice(1));
       } else {
         return element.tagName === selector.toUpperCase();
