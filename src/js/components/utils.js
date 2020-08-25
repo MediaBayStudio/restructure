@@ -23,10 +23,12 @@ return function(options) {
     return window.matchMedia(mediaQuery).matches;
   };
 
-  _.resizeHandler = {
-    handleEvent: _.initGrid,
-    ctx: _
-  };
+  // _.resizeHandler = {
+  //   handleEvent: _.initGrid,
+  //   ctx: _
+  // };
+
+  _.resizeHandler = _.initGrid.bind(_);
 
   _.grid = {};
   _.parentElements = [];

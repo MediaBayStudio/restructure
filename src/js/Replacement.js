@@ -1,11 +1,5 @@
-;(function(factory) {
-  if (typeof define === "function" && define.amd) {
-    define([], factory);
-  } else if (typeof exports === "object") {
-    module.exports = factory();
-  } else {
-    window.Replacement = factory();
-  }
+;(function(func) {
+  window.Replacement = func();
 })(function() {
   
   Replacement = (function() {
